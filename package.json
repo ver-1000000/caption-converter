@@ -1,0 +1,35 @@
+{
+  "name": "caption-converter",
+  "version": "0.0.0",
+  "description": "WebVTTをいい感じにあれやこれやして使い勝手を良くするWebアプリ",
+  "main": "dist/index.js",
+  "scripts": {
+    "preprepareassets": "npx rimraf dist",
+    "prepareassets": "npx cpx 'src/*.{ico,png,html,css}' dist/",
+    "prestart": "npm run prepareassets",
+    "start": "npx esbuild src/index.ts --bundle --sourcemap --outdir=src --servedir=src",
+    "prebuild": "npm run prepareassets",
+    "build": "npx esbuild src/index.ts --bundle --minify --outdir=dist",
+    "build:gh-pages": "npm run build"
+  },
+  "dependencies": {
+    "webvtt-parser": "*"
+  },
+  "devDependencies": {
+    "@types/node": "*",
+    "cpx": "*",
+    "esbuild": "*",
+    "rimraf": "*",
+    "typescript": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ver-1000000/caption-converter.git"
+  },
+  "author": "@Ver1000000000",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ver-1000000/caption-converter/issues"
+  },
+  "homepage": "https://github.com/ver-1000000/caption-converter"
+}

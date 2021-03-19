@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Caption Converter - 『字幕変換君』</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="twitter:card" content="player" />
+    <meta name="twitter:title" content="朱猪わらい" />
+    <meta name="twitter:image" content="https://ver-1000000.github.io/akaino-warai/image.png" />
+    <meta name="twitter:player" content="https://ver-1000000.github.io/akaino-warai/content.html" />
+    <meta name="twitter:player:height" content="512" />
+    <meta name="twitter:player:width" content="512" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="./styles.css" rel="stylesheet">
+    <script async src="./index.js"></script>
+  </head>
+  <body>
+    <h1>Caption Converter - 『字幕変換君』 β</h1>
+    <em>WebVTT</em>ファイルを、動画編集ソフトShotcutで読み込むmlt形式のファイルに変換します。
+    <section>
+      <dl>
+        <dt>WebVTT</dt>
+        <dd><input type="file" id="webvttInput"></dd>
+        <dt>mlt</dt>
+        <dd><input type="file" id="mltInput"></dd>
+        <dd><small>※ mltを選択しない場合、字幕だけのmltファイルを作成できます</small></dd>
+        <dt>mltをダウンロード</dt>
+        <dd><a download="project.mlt" href="data:" id="actionBtn">合 体 ！</a></dd>
+      </dl>
+      <dl>
+        <dt>Trackの数</dt>
+        <dd><input type="number" id="trackSizeInput" value="3" min="1"></dd>
+        <dt>カラーフィールド</dt>
+        <dd>
+          <form id="colorForm">
+            <ol>
+              <li>
+                <input type="text" name="field" data-index="0" value="#a#">が含まれる字幕を
+                <input type="color" name="color" data-index="0" value="#ed514e">の袋文字に割り当てる
+              </li>
+              <li>
+                <input type="text" name="field" data-index="1" value="#h#">が含まれる字幕を
+                <input type="color" name="color" data-index="1" value="#5bad92">の袋文字に割り当てる
+              </li>
+              <li>
+                <input type="text" name="field" data-index="2" value="">が含まれる字幕を
+                <input type="color" name="color" data-index="2" value="#eec34f">の袋文字に割り当てる
+              </li>
+            </ol>
+          </form>
+          <small>※ 優先順</small>
+        </dd>
+      </dl>
+    </section>
+    <footer>
+      <dl>
+        <dt>Author</dt>
+        <dd><a href="https://twitter.com/Ver1000000000">@Ver1000000000</a></dd>
+      </dl>
+      <dl>
+        <dt>Issues</dt>
+        <dd><a href="https://github.com/ver-1000000/caption-converter/issues">GitHub Issues</a></dd>
+      </dl>
+      <dl>
+        <dt>Related</dt>
+        <dd>
+          <a href="https://video-captioner.ver1000000.com/">Video Captioner - 『動画じま君』</a>
+        </dd>
+      </dl>
+      <dl>
+        <dt>Version</dt>
+        <dd>0.0.0</dd>
+      </dl>
+  </body>
+</html>
