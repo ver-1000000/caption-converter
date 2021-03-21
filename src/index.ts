@@ -1,4 +1,5 @@
 import { WebVTTParser, Cue } from 'webvtt-parser';
+import { version } from 'package.json';
 
 /** アサート関数。 */
 function assertIsDefined<T>(val: T): asserts val is NonNullable<T> {
@@ -252,4 +253,5 @@ addEventListener('load', () => {
   querySelector<HTMLFormElement>('#colorsForm').oninput  = colorsFormOnInput;
   querySelector<HTMLFormElement>('#optionsForm').oninput = optionsFormOnInput;
   querySelector<HTMLAnchorElement>('#actionBtn').onclick = actionAnchorOnClick;
+  querySelector<HTMLElement>('#version').textContent     = version;
 });

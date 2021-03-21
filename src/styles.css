@@ -38,6 +38,16 @@ body {
   box-shadow: 2px 2px #cccccc, 2px 2px #fff inset;
 }
 
+.error.requiredWebvtt {
+  display: none;
+}
+
+.btn[disabled] + .error.requiredWebvtt {
+  display:inline;
+  color: #fe1202;
+  font-size: 0.7rem;
+}
+
 [class^=icon-] {
   display: inline-block;
   width: 1em;

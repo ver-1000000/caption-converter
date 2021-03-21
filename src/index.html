@@ -34,7 +34,10 @@
         <h3>変換</h3>
         <p>WebVTTファイルとmltファイルを選択し、mltファイルに字幕が付与されたトラックをダウンロードします。</p>
         <p>mltファイルを選択せずにWebVTTファイルのみを選択した場合は、字幕のみのmltファイルを生成します。</p>
-        <p><a disabled class="btn" download="project.mlt" href="data:" id="actionBtn">mltをダウンロード</a></p>
+        <p>
+          <a disabled class="btn" download="project.mlt" href="data:" id="actionBtn">mltをダウンロード</a>
+          <small class="error requiredWebvtt">※ WebVTTファイルを選択してください</small>
+        </p>
         <form id="filesForm">
           <dl>
             <dt>WebVTT(必須)</dt>
@@ -107,7 +110,7 @@
           <a href="https://video-captioner.ver1000000.com/">Video Captioner - 『動画じま君』</a>
         </dd>
         <dt>Version</dt>
-        <dd>0.2.1</dd>
+        <dd id="version"></dd>
       </dl>
   </body>
 </html>
