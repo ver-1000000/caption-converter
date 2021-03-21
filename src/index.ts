@@ -195,56 +195,47 @@ const createTransitions = (i: number, mlt: Element): HTMLElement => {
   `);
 };
 
+/**
+ * producerを作成する。 次の要素を含む
+ * - `filter(simpleTextFilter)`: 字幕のフィルター。 #outline:n#のフィールド内容でoutlineの幅や存在を出し分けできる。
+ * - `filter(transitionFilter)`: producerの位置や回転などを制御するフィルター。 store.options.transitionで出し分けができる
+ */
 const createProducer = (cue: Cue, i: number): HTMLElement => {
-  const color            = store.fields.find(x => cue.text.includes(x.field))?.color || '#00000000';
-  const transitionFilter = (() => store.options.transition ? `
-    <filter id="${cue.id}-transitionfilter${i}">
+  const outlineColor     = store.fields.find(x => cue.text.includes(x.field))?.color;
+  const outlineWidth     = Number(((content = cue.text.match(/#outline:\d+#/)?.[0]) => (content || '#outline:12#').replace(/#outline:(\d+)#/, '$1'))());
+  const transitionFilter = () => store.options.transition ?
+    `<filter id="${cue.id}-transitionfilter${i}">
       <property name="mlt_service">affine</property>
       <property name="shotcut:filter">affineSizePosition</property>
-      <property name="transition.rect">0 0 1280 720 1</property>
-    </filter>
-  ` : '')();
-
-  return createXMLElementFromInnerHTML(`
-  <producer id="${cue.id}-producer${i + 1}">
-    <property name="resource">#00000000</property>
-    <property name="mlt_service">color</property>
-    <property name="shotcut:caption">${cue.text}</property>
-    <filter id="${cue.id}-simpletextfilter1">
+      <property name="transition.rect">0 0 ${store.width} ${store.height} 1</property>
+    </filter>` : '';
+  const simpleTextFilter = (num: number, color: string, outline: number, pad: number) =>
+    `<filter id="${cue.id}-simpletextfilter${num}">
       <property name="argument">${cue.text}</property>
-      <property name="geometry">0 240 1280 480 1</property>
+      <property name="geometry">0 240 ${store.width} ${store.height - 240} 1</property>
       <property name="family">Rounded-X Mgen+ 1c</property>
       <property name="size">96</property>
       <property name="weight">750</property>
       <property name="fgcolour">#ffffff</property>
       <property name="bgcolour">#00000000</property>
       <property name="olcolour">${color}</property>
-      <property name="outline">12</property>
+      <property name="outline">${outline}</property>
+      <property name="pad">${pad}</property>
       <property name="halign">center</property>
       <property name="valign">${['bottom', 'middle', 'top'][i % 3]}</property>
       <property name="mlt_service">dynamictext</property>
       <property name="shotcut:filter">dynamicText</property>
       <property name="shotcut:usePointSize">1</property>
       <property name="shotcut:pointSize">72</property>
-    </filter>
-    <filter id="${cue.id}-simpletextfilter2">
-      <property name="argument">${cue.text}</property>
-      <property name="geometry">0 240 1280 480 1</property>
-      <property name="family">Rounded-X Mgen+ 1c</property>
-      <property name="size">96</property>
-      <property name="weight">750</property>
-      <property name="fgcolour">#ffffff</property>
-      <property name="bgcolour">#00000000</property>
-      <property name="olcolour">#ffffff</property>
-      <property name="pad">6</property>
-      <property name="halign">center</property>
-      <property name="valign">${['bottom', 'middle', 'top'][i % 3]}</property>
-      <property name="mlt_service">dynamictext</property>
-      <property name="shotcut:filter">dynamicText</property>
-      <property name="shotcut:usePointSize">1</property>
-      <property name="shotcut:pointSize">72</property>
-    </filter>
-    ${transitionFilter}
+    </filter>`;
+  return createXMLElementFromInnerHTML(`
+  <producer id="${cue.id}-producer${i + 1}">
+    <property name="resource">#00000000</property>
+    <property name="mlt_service">color</property>
+    <property name="shotcut:caption">${cue.text}</property>
+    ${outlineColor && outlineWidth ? simpleTextFilter(1, outlineColor, outlineWidth, 0) : ''}
+    ${simpleTextFilter(outlineColor && outlineWidth ? 2 : 1, '#00000000', 0, outlineWidth / 2)}
+    ${transitionFilter()}
   </producer>
   `);
 };
