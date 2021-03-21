@@ -7,12 +7,12 @@
     <meta property="og:title" content="Caption Converter - 『字幕変換君』">
     <meta property="og:site_name" content="Caption Converter - 『字幕変換君』">
     <meta property="og:url" content="https://caption-converter.ver1000000.com/">
-    <meta property="og:description" content="WebVTTファイルを、動画編集ソフトShotcutで読み込むmlt形式のファイルに変換するためのWEBアプリケーションです。">
+    <meta property="og:description" content="WebVTTファイルを、様々な用途で利用できるよう変換するためのWebアプリです。">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://repository-images.githubusercontent.com/349350408/bdd85500-895c-11eb-9531-88ec87dd1313">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Ver1000000000">
-    <meta name="twitter:description" content="WebVTTファイルを、動画編集ソフトShotcutで読み込むmlt形式のファイルに変換するためのWEBアプリケーションです。">
+    <meta name="twitter:description" content="WebVTTファイルを、様々な用途で利用できるよう変換するためのWebアプリです。">
     <meta name="twitter:title" content="Caption Converter - 『字幕変換君』">
     <meta name="twitter:image" content="https://repository-images.githubusercontent.com/349350408/bdd85500-895c-11eb-9531-88ec87dd1313">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -20,76 +20,97 @@
     <script async src="./index.js"></script>
   </head>
   <body>
-    <h1>Caption Converter - 『字幕変換君』 β</h1>
-    <em>WebVTT</em>ファイルを、動画編集ソフト<a href="https://shotcut.org/">Shotcut</a>で読み込むmlt形式のファイルに変換します。
-    <section>
-      <dl>
-        <dt>WebVTT</dt>
-        <dd><input type="file" id="webvttInput"></dd>
-        <dt>mlt</dt>
-        <dd><input type="file" id="mltInput"></dd>
-        <dd><small>※ mltを選択しない場合、字幕だけのmltファイルを作成できます</small></dd>
-        <dt>mltをダウンロード</dt>
-        <dd><a download="project.mlt" href="data:" id="actionBtn">合 体 ！</a></dd>
-      </dl>
-      <dl>
-        <dt>Trackの数</dt>
-        <dd><input type="number" id="trackSizeInput" value="3" min="1"></dd>
-        <dt>袋文字</dt>
-        <dd>
-          <form id="colorForm">
-            <ol>
-              <li>
-                <input type="text" name="field" data-index="0" value="#a#">が含まれる字幕を
-                <input type="color" name="color" data-index="0" value="#ed514e">の袋文字に割り当てる
-              </li>
-              <li>
-                <input type="text" name="field" data-index="1" value="#h#">が含まれる字幕を
-                <input type="color" name="color" data-index="1" value="#5bad92">の袋文字に割り当てる
-              </li>
-              <li>
-                <input type="text" name="field" data-index="2" value="">が含まれる字幕を
-                <input type="color" name="color" data-index="2" value="#eec34f">の袋文字に割り当てる
-              </li>
-            </ol>
-          </form>
+    <header>
+      <h1>Caption Converter - 『字幕変換君』 β</h1>
+      <p><em>WebVTT</em>ファイルを、様々な用途で利用できるよう変換するためのWebアプリです。</p>
+    </header>
+
+    <article>
+      <h2>
+        <span class="icon-shotcut" area-hidden="true"></span>
+        For <a href="https://shotcut.org/">Shotcut</a>(mltファイル)
+      </h2>
+      <section>
+        <h3>変換</h3>
+        <p>WebVTTファイルとmltファイルを選択し、mltファイルに字幕が付与されたトラックをダウンロードします。</p>
+        <p>mltファイルを選択せずにWebVTTファイルのみを選択した場合は、字幕のみのmltファイルを生成します。</p>
+        <p>
+          <a disabled class="btn" download="project.mlt" href="data:" id="actionBtn">mltをダウンロード</a>
+          <small class="error requiredWebvtt">※ WebVTTファイルを選択してください</small>
+        </p>
+        <form id="filesForm">
           <dl>
-            <dt>フィールドタグ</dt>
-            <dd>
-              <samp>#outline:<kbd>12<kbd>#</samp> 袋文字のサイズを<kbd>12</kbd>にする<small>(<kbd>0</kbd>にすると袋文字なし、デフォルトは12、最大30)</small>
-            </dd>
+            <dt>WebVTT(必須)</dt>
+            <dd><input type="file" name="webvtt"></dd>
+            <dt>mlt(任意)</dt>
+            <dd><input type="file" accept=".mlt" name="mlt"></dd>
           </dl>
-        </dd>
-        <dt>その他オプション</dt>
-        <dd>
-          <form id="optionsForm">
-            <ul>
-              <li>
-                <label><input type="checkbox" name="transition"> 変換後のmltにtransitionフィルターを付与する</label>
-              </li>
-            </ul>
-          </form>
-        </dd>
-      </dl>
-    </section>
+        </form>
+      </section>
+      <section>
+        <h3>オプション</h3>
+        <dl>
+          <dt>袋文字(アウトラインの色)</dt>
+          <dd>
+            <form id="colorsForm">
+              <ol>
+                <li>
+                  フィールド<input type="text" name="field" data-index="0" value="#a#">が含まれる字幕を
+                  <input type="color" name="color" data-index="0" value="#ed514e">の袋文字に割り当てる
+                </li>
+                <li>
+                  フィールド<input type="text" name="field" data-index="1" value="#h#">が含まれる字幕を
+                  <input type="color" name="color" data-index="1" value="#5bad92">の袋文字に割り当てる
+                </li>
+                <li>
+                  フィールド<input type="text" name="field" data-index="2" value="">が含まれる字幕を
+                  <input type="color" name="color" data-index="2" value="#eec34f">の袋文字に割り当てる
+                </li>
+              </ol>
+            </form>
+          </dd>
+          <dt>その他オプション</dt>
+          <dd>
+            <form id="optionsForm">
+              <ul>
+                <li>
+                  <label><input type="checkbox" name="transition"> 変換後のmltにtransitionフィルターを付与する</label>
+                </li>
+                <li>
+                  <label>追加する字幕用トラックの数 <input type="number" name="trackSize" value="3" min="1"></label>
+                  <ul>
+                    <li>トラックの数が多いほど、<strong>表示時間が重複した字幕が減り、WebVTTの再現度が高く</strong>なります</li>
+                  </ul>
+                </li>
+              </ul>
+            </form>
+          </dd>
+        </dl>
+      </section>
+      <section>
+        <h3>ヘルプ</h3>
+        <dl>
+          <dt>フィールドタグ</dt>
+          <dd>
+            <samp>#outline:<kbd>12</kbd>#</samp>
+            袋文字のサイズを<kbd>12</kbd>にする<small>(<kbd>0</kbd>にすると袋文字なし、デフォルトは12、最大30)</small>
+          </dd>
+        </dl>
+      </section>
+    </article>
+
     <footer>
       <dl>
         <dt>Author</dt>
         <dd><a href="https://twitter.com/Ver1000000000">@Ver1000000000</a></dd>
-      </dl>
-      <dl>
         <dt>Issues</dt>
         <dd><a href="https://github.com/ver-1000000/caption-converter/issues">GitHub Issues</a></dd>
-      </dl>
-      <dl>
         <dt>Related</dt>
         <dd>
           <a href="https://video-captioner.ver1000000.com/">Video Captioner - 『動画じま君』</a>
         </dd>
-      </dl>
-      <dl>
         <dt>Version</dt>
-        <dd>0.2.0</dd>
+        <dd id="version"></dd>
       </dl>
   </body>
 </html>
