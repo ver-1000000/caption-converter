@@ -22,7 +22,7 @@
   <body>
     <header>
       <h1>Caption Converter - 『字幕変換君』 β</h1>
-      <p><em>WebVTT</em>ファイルを、様々な用途で利用できるよう変換するためのWebアプリです。</p>
+      <p><em>WebVTT</em>(字幕)ファイルを、様々な用途で利用できるよう変換するためのWebアプリです。</p>
     </header>
 
     <article>
@@ -32,20 +32,19 @@
       </h2>
       <section>
         <h3>変換</h3>
-        <p>WebVTTファイルとmltファイルを選択し、mltファイルに字幕が付与されたトラックをダウンロードします。</p>
-        <p>mltファイルを選択せずにWebVTTファイルのみを選択した場合は、字幕のみのmltファイルを生成します。</p>
-        <p>
-          <a disabled class="btn" download="project.mlt" href="data:" id="actionBtn">mltをダウンロード</a>
-          <small class="error requiredWebvtt">※ WebVTTファイルを選択してください</small>
-        </p>
         <form id="filesForm">
           <dl>
             <dt>WebVTT(必須)</dt>
             <dd><input type="file" name="webvtt"></dd>
             <dt>mlt(任意)</dt>
             <dd><input type="file" accept=".mlt" name="mlt"></dd>
+            <dd><small>mltファイルを選択した場合、このmltファイルを元に、字幕情報のCAPトラックを付与したmltファイルを作成します</small></dd>
           </dl>
         </form>
+        <p>
+          <a disabled class="btn" download="project.mlt" href="data:" id="actionBtn">mltをダウンロード</a>
+          <small class="error requiredWebvtt">※ WebVTTファイルを選択してください</small>
+        </p>
       </section>
       <section>
         <h3>オプション</h3>
@@ -79,7 +78,12 @@
                 <li>
                   <label>追加する字幕用トラックの数 <input type="number" name="trackSize" value="3" min="1"></label>
                   <ul>
-                    <li>トラックの数が多いほど、<strong>表示時間が重複した字幕が減り、WebVTTの再現度が高く</strong>なります</li>
+                    <li>「重複したタイミングの字幕」の表示を回避するために、トラック数を増やします</li>
+                    <li>「重複したタイミングの字幕」が多ければ多いほど、Shotcut上での字幕の時間とWebVTTの字幕の時間に乖離が発生します</li>
+                    <li>
+                      トラックの数が多いほど、<strong>「重複したタイミングの字幕」が減り、WebVTTの再現度が高く</strong>なりますが、
+                      <strong>編集が煩雑になり、動作が緩慢になる</strong>可能性があります
+                    </li>
                   </ul>
                 </li>
               </ul>
@@ -90,10 +94,22 @@
       <section>
         <h3>ヘルプ</h3>
         <dl>
-          <dt>フィールドタグ</dt>
+          <dt>フィールド</dt>
           <dd>
-            <samp>#outline:<kbd>12</kbd>#</samp>
-            袋文字のサイズを<kbd>12</kbd>にする<small>(<kbd>0</kbd>にすると袋文字なし、デフォルトは12、最大30)</small>
+            <p>字幕テキスト内の<samp>#</samp>で囲った文字列を、Shotcutでは<em>フィールド</em>と呼びます。</p>
+            <p>本アプリは特定のフィールドが内包されている字幕に対して、以下のような挙動を与えます。</p>
+            <table>
+              <thead>
+                <tr>
+                  <th>フィールド例</th>
+                  <th>説明</th>
+                </tr>
+              </thead>
+              <tr>
+                <th><samp>#outline:<kbd>12</kbd>#</samp></th>
+                <td>袋文字のサイズを<kbd>12</kbd>にする<small>(<kbd>0</kbd>にすると袋文字なし、デフォルトは12、最大30)</small></td>
+              </tr>
+            </table>
           </dd>
         </dl>
       </section>
@@ -103,8 +119,8 @@
       <dl>
         <dt>Author</dt>
         <dd><a href="https://twitter.com/Ver1000000000">@Ver1000000000</a></dd>
-        <dt>Issues</dt>
-        <dd><a href="https://github.com/ver-1000000/caption-converter/issues">GitHub Issues</a></dd>
+        <dt>Source</dt>
+        <dd><a href="https://github.com/ver-1000000/caption-converter">GitHub</a></dd>
         <dt>Related</dt>
         <dd>
           <a href="https://video-captioner.ver1000000.com/">Video Captioner - 『動画じま君』</a>
