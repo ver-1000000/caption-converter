@@ -11,8 +11,9 @@ function assertIsDefined<T>(val: T): asserts val is NonNullable<T> {
 const domParser     = new DOMParser();
 const webvttParser  = new WebVTTParser();
 const xmlSerializer = new XMLSerializer();
+const DEFAULT_SIZE  = { width: 1280, height: 720 };
 const DEFAULT_MLT   = domParser.parseFromString(`<mlt LC_NUMERIC="C" version="6.24.0" title="Shotcut created by Caption Converter" producer="main_bin">
-  <profile description="automatic" width="1280" height="720" progressive="1" sample_aspect_num="1" sample_aspect_den="1" display_aspect_num="16" display_aspect_den="9" frame_rate_num="30" frame_rate_den="1" colorspace="709"/>
+  <profile description="automatic" width="${DEFAULT_SIZE.width}" height="${DEFAULT_SIZE.height}" progressive="1" sample_aspect_num="1" sample_aspect_den="1" display_aspect_num="16" display_aspect_den="9" frame_rate_num="30" frame_rate_den="1" colorspace="709"/>
   <playlist id="main_bin">
     <property name="xml_retain">1</property>
   </playlist>
@@ -44,7 +45,10 @@ const store = {
   trackSize: 3,
   cues: new Array<Cue>(),
   xml: DEFAULT_MLT,
-  fields: [{ field: '#a#', color: '#ed514e' }, { field: '#h#', color: '#5bad92' }, { field: '', color: '#eec34f' }]
+  width: DEFAULT_SIZE.width,
+  height: DEFAULT_SIZE.height,
+  fields: [{ field: '#a#', color: '#ed514e' }, { field: '#h#', color: '#5bad92' }, { field: '', color: '#eec34f' }],
+  options: { transition: false }
 };
 
 /** 絶対にDOM見つけてくるマン。 */
@@ -82,6 +86,13 @@ const colorFormOnInput = (e: Event) => {
   ([...form.elements] as HTMLInputElement[]).forEach(e => store.fields[Number(e.dataset.index)][e.name as 'field' | 'color'] = e.value);
 }
 
+/** optionsFormが入力されたとき、`store.mlt`を登録する。 */
+const optionsFormOnInput = (e: Event) => {
+  const form = (e.target as HTMLInputElement).form;
+  assertIsDefined(form);
+  store.options.transition = (form.elements.namedItem('transition') as HTMLInputElement).checked;
+}
+
 /** `合体`ボタン押下。 */
 const actionAnchorOnClick = async (e: MouseEvent) => {
   const xml             = prepareDirectives(store.xml);
@@ -98,7 +109,7 @@ const actionAnchorOnClick = async (e: MouseEvent) => {
   store.cues.forEach((cue, i) => {
     const producer = createProducer(cue, i);
     const playlist = playlists[i % store.trackSize];
-    updatePlaylistByCue(playlist, cue);
+    updatePlaylistByCue(playlist, cue, i);
     mlt.insertBefore(producer, playlist);
   });
   // trackをtractorに追加
@@ -130,7 +141,7 @@ const prepareDirectives = (untochedXml: Document): Document => {
   return xml;
 };
 
-const updatePlaylistByCue = (playlist: HTMLElement, cue: Cue): void => {
+const updatePlaylistByCue = (playlist: HTMLElement, cue: Cue, i: number): void => {
   const timeToNumber = (time: string) => time.split(':').reduce<number[]>((a, b) => a.map(x => x * 60).concat(Number(b)), []).reduce((a, b) => a + b);
   const numberToTime = (num: number) => {
     num = Math.max(0, num);
@@ -145,7 +156,7 @@ const updatePlaylistByCue = (playlist: HTMLElement, cue: Cue): void => {
   const adjustTime  = Math.min(blankLength, 0); // 再生箇所がかぶってしまったとき、outの時間を減らして調整する
   blank.setAttribute('length', numberToTime(blankLength));
   entry.setAttribute('out', numberToTime(cue.endTime - cue.startTime + adjustTime));
-  entry.setAttribute('producer', cue.id);
+  entry.setAttribute('producer', `${cue.id}-producer${i + 1}`);
   entry.dataset.cue = cue.text.substr(0, 5);
   entry.dataset.spent = numberToTime(spent) + '-' + blankLength;
   playlist.appendChild(blank);
@@ -184,15 +195,23 @@ const createTransitions = (i: number, mlt: Element): HTMLElement => {
   `);
 };
 
-const createProducer = ({ id, text }: Cue, i: number): HTMLElement => {
-  const color = store.fields.find(x => text.includes(x.field))?.color || '#00000000';
+const createProducer = (cue: Cue, i: number): HTMLElement => {
+  const color            = store.fields.find(x => cue.text.includes(x.field))?.color || '#00000000';
+  const transitionFilter = (() => store.options.transition ? `
+    <filter id="${cue.id}-transitionfilter${i}">
+      <property name="mlt_service">affine</property>
+      <property name="shotcut:filter">affineSizePosition</property>
+      <property name="transition.rect">0 0 1280 720 1</property>
+    </filter>
+  ` : '')();
+
   return createXMLElementFromInnerHTML(`
-  <producer id="${id}">
+  <producer id="${cue.id}-producer${i + 1}">
     <property name="resource">#00000000</property>
     <property name="mlt_service">color</property>
-    <property name="shotcut:caption">${text}</property>
-    <filter id="${id}-filter1">
-      <property name="argument">${text}</property>
+    <property name="shotcut:caption">${cue.text}</property>
+    <filter id="${cue.id}-simpletextfilter1">
+      <property name="argument">${cue.text}</property>
       <property name="geometry">0 240 1280 480 1</property>
       <property name="family">Rounded-X Mgen+ 1c</property>
       <property name="size">96</property>
@@ -208,8 +227,8 @@ const createProducer = ({ id, text }: Cue, i: number): HTMLElement => {
       <property name="shotcut:usePointSize">1</property>
       <property name="shotcut:pointSize">72</property>
     </filter>
-    <filter id="${id}-filter2">
-      <property name="argument">${text}</property>
+    <filter id="${cue.id}-simpletextfilter2">
+      <property name="argument">${cue.text}</property>
       <property name="geometry">0 240 1280 480 1</property>
       <property name="family">Rounded-X Mgen+ 1c</property>
       <property name="size">96</property>
@@ -225,20 +244,17 @@ const createProducer = ({ id, text }: Cue, i: number): HTMLElement => {
       <property name="shotcut:usePointSize">1</property>
       <property name="shotcut:pointSize">72</property>
     </filter>
+    ${transitionFilter}
   </producer>
   `);
 };
 
 /** 起動。 */
 addEventListener('load', () => {
-  const trackSizeInput   = querySelector<HTMLInputElement>('#trackSizeInput');
-  const webvttInput      = querySelector<HTMLInputElement>('#webvttInput');
-  const mltInput         = querySelector<HTMLInputElement>('#mltInput');
-  const colorForm        = querySelector<HTMLFormElement>('#colorForm');
-  const actionBtn        = querySelector<HTMLInputElement>('#actionBtn');
-  trackSizeInput.oninput = trackSizeOnInput;
-  webvttInput.oninput    = webvttOnInput;
-  mltInput.oninput       = mltOnInput;
-  colorForm.oninput      = colorFormOnInput;
-  actionBtn.onclick      = actionAnchorOnClick;
+  querySelector<HTMLInputElement>('#trackSizeInput').oninput = trackSizeOnInput;
+  querySelector<HTMLInputElement>('#webvttInput').oninput    = webvttOnInput;
+  querySelector<HTMLInputElement>('#mltInput').oninput       = mltOnInput;
+  querySelector<HTMLFormElement>('#colorForm').oninput       = colorFormOnInput;
+  querySelector<HTMLInputElement>('#optionsForm').oninput    = optionsFormOnInput;
+  querySelector<HTMLInputElement>('#actionBtn').onclick      = actionAnchorOnClick;
 });

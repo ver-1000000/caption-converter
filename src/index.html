@@ -21,7 +21,7 @@
   </head>
   <body>
     <h1>Caption Converter - 『字幕変換君』 β</h1>
-    <em>WebVTT</em>ファイルを、動画編集ソフトShotcutで読み込むmlt形式のファイルに変換します。
+    <em>WebVTT</em>ファイルを、動画編集ソフト<a href="https://shotcut.org/">Shotcut</a>で読み込むmlt形式のファイルに変換します。
     <section>
       <dl>
         <dt>WebVTT</dt>
@@ -35,7 +35,7 @@
       <dl>
         <dt>Trackの数</dt>
         <dd><input type="number" id="trackSizeInput" value="3" min="1"></dd>
-        <dt>カラーフィールド</dt>
+        <dt>袋文字</dt>
         <dd>
           <form id="colorForm">
             <ol>
@@ -53,7 +53,20 @@
               </li>
             </ol>
           </form>
-          <small>※ 優先順</small>
+          <dl>
+            <dt>フィールドタグ</dt>
+            <dd><samp>#outline:<kbd>3<kbd>#</samp> 袋文字のサイズを<kbd>3</kbd>にする<small>(<kbd>0</kbd>にすると袋文字なし)</small></dd>
+          </dl>
+        </dd>
+        <dt>その他オプション</dt>
+        <dd>
+          <form id="optionsForm">
+            <ul>
+              <li>
+                <label><input type="checkbox" name="transition"> 変換後のmltにtransitionフィルターを付与する</label>
+              </li>
+            </ul>
+          </form>
         </dd>
       </dl>
     </section>
