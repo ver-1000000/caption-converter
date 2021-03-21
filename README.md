@@ -1,7 +1,9 @@
 # 字幕変換君
-字幕変換君(JIMAKU-HENKAN-KUN -- Caption Converter) is WEBVTT converter for Shotcut.
+字幕変換君(JIMAKU-HENKAN-KUN -- Caption Converter) is useful WEBVTT converter.
 
-<em>WebVTT</em>ファイルを、動画編集ソフトShotcutで読み込むmlt形式のファイルに変換するためのWEBアプリケーションです。
+_WebVTT_ ファイルを、様々な用途で利用できるよう変換するためのWebアプリです。
+
+現在はmltファイルへの変換機能を有しています。
 
 ## demo
 - https://caption-converter.ver1000000.com/
