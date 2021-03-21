@@ -54,15 +54,15 @@
             <form id="colorsForm">
               <ol>
                 <li>
-                  フィールド<input type="text" name="field" data-index="0" value="#a#">が含まれる字幕を
+                  <input type="text" name="field" data-index="0" value="#a#">が含まれる字幕を
                   <input type="color" name="color" data-index="0" value="#ed514e">の袋文字に割り当てる
                 </li>
                 <li>
-                  フィールド<input type="text" name="field" data-index="1" value="#h#">が含まれる字幕を
+                  <input type="text" name="field" data-index="1" value="#h#">が含まれる字幕を
                   <input type="color" name="color" data-index="1" value="#5bad92">の袋文字に割り当てる
                 </li>
                 <li>
-                  フィールド<input type="text" name="field" data-index="2" value="">が含まれる字幕を
+                  <input type="text" name="field" data-index="2" value="">が含まれる字幕を
                   <input type="color" name="color" data-index="2" value="#eec34f">の袋文字に割り当てる
                 </li>
               </ol>
@@ -97,7 +97,8 @@
           <dt>フィールド</dt>
           <dd>
             <p>字幕テキスト内の<samp>#</samp>で囲った文字列を、Shotcutでは<em>フィールド</em>と呼びます。</p>
-            <p>本アプリは特定のフィールドが内包されている字幕に対して、以下のような挙動を与えます。</p>
+            <p>フィールドは、字幕に現れることのない特別な文字列です。</p>
+            <p>本アプリでは一部のカスタムフィールドが内包されている字幕に対して、以下のような挙動を与えます。</p>
             <table>
               <thead>
                 <tr>
@@ -107,7 +108,7 @@
               </thead>
               <tr>
                 <th><samp>#outline:<kbd>12</kbd>#</samp></th>
-                <td>袋文字のサイズを<kbd>12</kbd>にする<small>(<kbd>0</kbd>にすると袋文字なし、デフォルトは12、最大30)</small></td>
+                <td>袋文字のアウトライン幅を<kbd>12</kbd>にする<small>(<kbd>0</kbd>にすると袋文字なし、デフォルトは12、最大30)</small></td>
               </tr>
             </table>
           </dd>
