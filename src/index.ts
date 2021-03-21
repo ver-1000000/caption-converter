@@ -37,16 +37,16 @@ const DEFAULT_MLT   = domParser.parseFromString(`<?xml version="1.0" standalone=
       <property name="disable">1</property>
     </transition>
   </tractor>
-`,
-'text/xml');
+`, 'text/xml');
 const store = {
   trackSize: 3,
-  cues: new Array<Cue>(),
-  xml: DEFAULT_MLT,
   width: DEFAULT_SIZE.width,
   height: DEFAULT_SIZE.height,
   fields: [{ field: '#a#', color: '#ed514e' }, { field: '#h#', color: '#5bad92' }, { field: '', color: '#eec34f' }],
-  options: { trackSize: 3, transition: false }
+  options: { trackSize: 3, transition: false },
+  files: { webvtt: undefined as File | undefined, mlt: undefined as File | undefined },
+  cues: Array<Cue>(),
+  xml: DEFAULT_MLT
 };
 
 /** 絶対にDOM見つけてくるマン。 */
@@ -176,24 +176,15 @@ class CreateMLTElement {
 }
 
 /** filesFormが入力されたとき、`store.cues`と`store.mlt`を登録する。 */
-const filesFormOnInput = (e: Event) => {
-  const fileToText = async (name: string) => (await (form?.elements.namedItem(name) as HTMLInputElement).files?.[0]?.text()) || '';
-  const form       = (e.target as HTMLInputElement).form;
+const filesFormOnInput = async (e: Event) => {
+  const btn  = querySelector<HTMLAnchorElement>('#actionBtn');
+  const form = (e.target as HTMLInputElement).form;
   assertIsDefined(form);
-  // WebVTT
-  (async () => {
-    const webvtt = await fileToText('webvtt');
-    const cues   = webvttParser.parse(webvtt).cues;
-    const btn    = querySelector<HTMLAnchorElement>('#actionBtn');
-    store.cues   = cues;
-    webvtt ? btn.removeAttribute('disabled') : btn.setAttribute('disabled', '');
-  })();
-  // mlt
-  (async () => {
-    const mlt = await fileToText('mlt');
-    const xml = mlt ? domParser.parseFromString(mlt, 'text/xml') : DEFAULT_MLT;
-    store.xml = xml;
-  })();
+  store.files.webvtt = (form?.elements.namedItem('webvtt') as HTMLInputElement).files?.[0];
+  store.files.mlt    = (form?.elements.namedItem('mlt') as HTMLInputElement).files?.[0];
+  store.cues         = await Promise.resolve(store.files.webvtt?.text()).then(text => webvttParser.parse(text || '').cues);
+  store.xml          = await Promise.resolve(store.files.mlt?.text()).then(text => text ? domParser.parseFromString(text, 'text/xml') : DEFAULT_MLT);
+  store.files.webvtt ? btn.removeAttribute('disabled') : btn.setAttribute('disabled', '');
 }
 
 
@@ -213,7 +204,7 @@ const optionsFormOnInput = (e: Event) => {
 }
 
 /** `合体`ボタン押下。 */
-const actionAnchorOnClick = async (e: MouseEvent) => {
+const actionAnchorOnClick = (e: MouseEvent) => {
   const xml             = prepareDirectives(store.xml);
   const mlt             = querySelector<HTMLUnknownElement>('mlt', xml);
   const tractor         = querySelector<HTMLUnknownElement>('tractor', mlt);
@@ -244,7 +235,10 @@ const actionAnchorOnClick = async (e: MouseEvent) => {
   });
   mlt.querySelectorAll('[xmlns="http://www.w3.org/1999/xhtml"]').forEach(x => x.removeAttributeNS(null, 'xmlns'));
   const xmlText = xmlSerializer.serializeToString(xml).replaceAll(' xmlns="http://www.w3.org/1999/xhtml"', '');
-  (e.target as HTMLAnchorElement).href = URL.createObjectURL(new Blob([xmlText], { type: 'text/plain' }));
+  Object.assign((e.target as HTMLAnchorElement), {
+    href: URL.createObjectURL(new Blob([xmlText], { type: 'text/plain' })),
+    download: (store.files.mlt?.name || 'project.mlt').replace(/\.\w+$/, '').replace(/$/, '-captioned.mlt')
+  });
 }
 
 /** 起動。 */

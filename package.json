@@ -1,6 +1,6 @@
 {
   "name": "caption-converter",
-  "version": "0.2.2",
+  "version": "0.3.2",
   "description": "WebVTTをいい感じにあれやこれやして使い勝手を良くするWebアプリ",
   "main": "dist/index.js",
   "scripts": {
